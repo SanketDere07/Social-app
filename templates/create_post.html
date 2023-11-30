@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <title>Create Post - {{ login_data[0].firstname}}{{login_data[0].lastname}}</title>
+</head>
+<style>
+    .bold_name{
+        font-weight: bold;
+    }
+</style>
+<body>
+    <div class="row mt-4">
+        <div class="col-5"></div>
+        <div class="col-3"><h4 class="bold_name">Create Post</h4></div>
+        <div class="col-4"></div>
+    </div>
+    <hr>
+    <form method="POST" action="/create_post" enctype="multipart/form-data">
+    <div class="row mt-4">
+        <div class="row mt-4">
+                <div class="col-4"></div>
+                <div class="col-4">Caption :<input type="text" id="post" name="post"></div>
+                <div class="col-4"></div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-4"></div>
+            <div class="col-4">Photo :<input type="file" id="post_img" name="post_img"></div>
+            <div class="col-4"></div>
+    </div>
+        <div class="row mt-4">
+            <div class="col-5"></div>
+            <div class="col-3"><button type="submit" class="btn btn-primary mt-4">Submit</button></div>
+            <div class="col-4"></div>
+        </div>
+        
+    </div>
+</form>
+    <script>
+        
+        function create_post() {
+            username =' {{ login_data[0].firstname}}'+' {{login_data[0].lastname}}'
+            var json_data = {
+                'posts': document.getElementById("post").value,
+                'username':username
+            }
+            console.log(json_data)
+            $.ajax({
+                type: 'POST',
+                url: '/create_post',
+                data: JSON.stringify(json_data),
+                contentType: 'application/json',
+                success: function (data) {
+                   
+                    console.log("create post Successfully")
+
+                }
+            })
+
+
+        }
+    </script>
+</body>
+</html>
