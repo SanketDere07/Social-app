@@ -1,5 +1,5 @@
 # Social-app
-# My Task - Sanket Dere
+#  - Sanket Dere
 
 ## Description
 
