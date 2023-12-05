@@ -20,31 +20,59 @@
 </head>
 <body>
 
-
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto ">
-        <!-- <li class="nav-item active">
-            <a class="nav-link" href="#"> <span class="sr-only">(current)</span></a>
-          </li>
+<div class="row">
+    <div class="col-1"></div>
+    <div class="col-10">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto ">
           <li class="nav-item active">
-            <a class="nav-link" href="#"> <span class="sr-only">(current)</span></a>
-          </li> -->
-        <li class="nav-item active">
-          <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/create_post_show">Create post</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/profile">My profile</a>
+            <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
           </li>
-      </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="/create_post_show">Create post</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/profile">My profile - {{login_data[-1].firstname}} {{login_data[-1].lastname}}</a>
+            </li>
+        </ul>
+      </div>
+    </nav>
     </div>
-  </nav>
+</div>
+<div class="modal"  id="comment_post" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Comments</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group mb-1" style="display: none;">
+                <input type="text" class="form-control mt-1" id="post_uid_send" name="post_uid_send">
+              </div>
+              <div class="form-group mb-1">
+                <label for="exampleInputEmail1">Comment :</label>
+                <input type="text" class="form-control mt-1" id="comment_post_send" name="comment_post_send" placeholder="Comment on post" aria-describedby="emailHelp">
+              </div>
+              <div class="card">
+                <div id="comments_show"></div>
+              </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="save_comment_post()">Comment</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <div class="row mt-4">
         <div class="col-1"></div>
         <div class="col-10" id="username"></div>
@@ -61,6 +89,8 @@
     </div>
 
     <script>
+        current_user = "{{login_data[-1].firstname}} {{login_data[-1].lastname}}"
+        console.log(" current user is :",current_user)
         function show_all_posts(){
             $.ajax({
                 type: 'GET',
@@ -68,27 +98,196 @@
                 contentType: 'application/json',
                 success: function (data) {
                     console.log("Get all users posts Successfully",data)
+                    // for (var j = 0; j < data.length; j++) {
+                    //     var username = data[j]['username'];
+                    //     var imageSrc = data[j]['photo'] && data[j]['photo']['data'];
+
+                    //     var postDiv = $('<div class="post mb-4" style="border: 2px grey solid;">');
+
+                    //     postDiv.append('<h5>' + username + '</h5>');
+                    //     if (username != current_user){
+                    //         postDiv.append('<button class="btn btn-primary" onclick="follow_user(\'' + username + '\')">FOLLOW </button>');
+                    //     }
+                    //     if (imageSrc) {
+                    //         var imgElement = $('<img id="postImage' + j + '" src="data:image/jpeg;base64,' + imageSrc + '" alt="Post Image" style="width: 100%; height: 555px;">');
+                    //         imgElement.attr('onclick', 'handleImageClick("' + imageSrc + '", "' + data[j]['post_uid'] + '")');
+                    //         postDiv.append(imgElement); 
+                    //     }
+                    //     var buttonsRow = $('<div class="row mt-4"></div>');
+                    //     buttonsRow.append('<div class="col-1" id="like"><i class="fa fa-heart-o fa-2x" aria-hidden="true"></i></div>');
+                    //     buttonsRow.append('<div class="col-1" id="comment"><i class="fa fa-comment-o fa-2x" aria-hidden="true" onclick="comment_post(\'' + imageSrc + '\', \'' + data[j]['post_uid'] + '\')"></i></div>');
+                    //     buttonsRow.append('<div class="col-1" id="share"><i class="fa fa-share fa-2x" aria-hidden="true"></i></div>');
+                    //     // buttonsRow.find("#comment").click(function () {
+                    //     //     $('#comment_post').modal('show');
+                    //     // });
+                    //     postDiv.append(buttonsRow);
+                    //     $('#postsContainer').append(postDiv);
+                    // }
+
+
                     for (var j = 0; j < data.length; j++) {
-                        var username = data[j]['username'];
-                        var imageSrc = data[j]['photo'] && data[j]['photo']['data'];
+                            var username = data[j]['username'];
+                            var imageSrc = data[j]['photo'] && data[j]['photo']['data'];
 
-                        var postDiv = $('<div class="post mb-4" style="border: 2px grey solid;">');
-                        postDiv.append('<h5>' + username + '</h5>');
-                        
-                        if (imageSrc) {
-                            postDiv.append('<img src="data:image/jpeg;base64,' + imageSrc + '" alt="Post Image" style="width: 100%; height: 555px;">');
+                            var postDiv = $('<div class="post mb-4" style="border: 2px grey solid;">');
+                            var headerRow = $('<div class="row"></div>');
+                            var usernameColumn = $('<div class="col-10 mt-2 mb-2"><h5>' + username + '</h5></div>');
+                            headerRow.append(usernameColumn);
+                            var buttonColumn = $('<div class="col-2"><button class="btn btn-primary mt-2 mb-2" style = "margin-left:60px"onclick="follow_user(\'' + username + '\')">FOLLOW </button></div>');
+                            headerRow.append(buttonColumn);
+
+                            postDiv.append(headerRow);
+
+                            if (imageSrc) {
+                                var imgElement = $('<img id="postImage' + j + '" src="data:image/jpeg;base64,' + imageSrc + '" alt="Post Image" style="width: 100%; height: 555px;">');
+                                imgElement.attr('onclick', 'handleImageClick("' + imageSrc + '", "' + data[j]['post_uid'] + '")');
+                                postDiv.append(imgElement);
+                            }
+
+                            var buttonsRow = $('<div class="row mt-4"></div>');
+                            buttonsRow.append('<div class="col-1" id="like_'+ data[j]['post_uid'] +'" ><i class="fa fa-heart-o fa-2x" aria-hidden="true" onclick="like_post(\'' + imageSrc + '\', \'' + data[j]['post_uid'] + '\')"></i></div>');
+                            buttonsRow.append('<div class="col-1" id="comment"><i class="fa fa-comment-o fa-2x" aria-hidden="true" onclick="comment_post(\'' + imageSrc + '\', \'' + data[j]['post_uid'] + '\')"></i></div>');
+                            buttonsRow.append('<div class="col-1" id="share"><i class="fa fa-share fa-2x" aria-hidden="true"></i></div>');
+
+                            postDiv.append(buttonsRow);
+                            $('#postsContainer').append(postDiv);
                         }
-                        var buttonsRow = $('<div class="row mt-4"></div>');
-                        buttonsRow.append('<div class="col-1" id="like"><i class="fa fa-heart-o fa-2x" aria-hidden="true"></i></div>');
-                        buttonsRow.append('<div class="col-1" id="comment"><i class="fa fa-comment-o fa-2x" aria-hidden="true"></i></div>');
-                        buttonsRow.append('<div class="col-1" id="share"><i class="fa fa-share fa-2x" aria-hidden="true"></i></div>');
 
-                        postDiv.append(buttonsRow);
-                        $('#postsContainer').append(postDiv);
+                }
+            })
+            get_like_post_data()
+        }
+
+        function like_post(imageSrc, post_uid) {
+            console.log("=======sssss====", post_uid);
+            json_data = {
+                "like_by": current_user,
+                "post_uid": post_uid
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/like_post',
+                data: JSON.stringify(json_data),
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log("== Successfully Like to users POST ==");
+                    update_like_icon(post_uid);
+                }
+            });
+        }
+        function update_like_icon(post_uid) {
+                console.log("Updating like icon for post_uid:", post_uid);
+                var likeIcon = document.getElementById('like_' + post_uid).querySelector('i');
+                console.log("Selected Element:", likeIcon);
+                likeIcon.classList.remove('fa-heart-o');
+                likeIcon.classList.add('fa-heart', 'text-danger');
+            }
+
+
+        function get_like_post_data(){
+            $.ajax({
+                type: 'GET',
+                url: '/get_like_post_data',
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log("== Successfully GET Like to users POST DATA ALL =====>>>",data)
+                    for(i=0;i<data.length;i++){
+                        if(current_user == data[i]['like_by']){
+                            console.log("== current user =====",current_user,data[i]['like_by'],data[i]['post_uid'])
+                            var likeElement = document.getElementById('like_' + data[i]['post_uid']);
+                            if (likeElement) {
+                                var likeIcon = likeElement.querySelector('i');
+                                console.log("Selected Element:", likeIcon);
+                                // Perform your class manipulation here
+                            } else {
+                                console.error("Element not found for post_uid:", data[i]['post_uid']);
+                            }
+
+                            update_like_icon(data[i]['post_uid'])
+                        
+                        }
+                        
                     }
+                    }
+            })
+        }
+
+        // ================  COMMENT API ========================
+        function comment_post(imageSrc,post_uid){
+            console.log("=======ssooooosss====",post_uid)
+            $('#comment_post').modal('show');
+            json_data = {
+                "post_uid":post_uid
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/comment_post_data_get',
+                data: JSON.stringify(json_data),
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log("== Successfully get comment on post ==",data)
+                    if(data.length >= 1){
+                        for (var i = 0; i < data.length; i++) {
+                            console.log("i am in if >>>", data);
+                            var postDiv = $('<div class="comment_show mb-3">');
+                            postDiv.append('<h6>' + data[i]['username'] + '</h6>'); 
+
+                            var buttonsRow = $('<div class="row mt-2"></div>');
+                            buttonsRow.append('<div class="col-10">' + data[i]['comment'] + ' </div>');
+                            console.log(" data is ====>>>>",data['comment'])
+                            postDiv.append(buttonsRow);
+
+                            $('#comments_show').append(postDiv);
+                            document.getElementById("post_uid_send").value = data[i]['post_uid'];
+                        }
+                    }else{
+                        console.log("i am in else >>>",data)
+                        document.getElementById("post_uid_send").value = post_uid
+                    }
+
+                    }
+            })
+        }
+        function save_comment_post(){
+            var firstName = "{{login_data[-1].firstname}}"; 
+            var lastName = "{{login_data[-1].lastname}}";
+            var username = firstName + ' ' + lastName;
+            json_data = {
+                "comment":document.getElementById("comment_post_send").value,
+                "post_uid":document.getElementById("post_uid_send").value,
+                "username":username
+            }
+            console.log("JSON comment save is -->>",json_data)
+            $.ajax({
+                type: 'POST',
+                url: '/save_comment_post',
+                data: JSON.stringify(json_data),
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log("== Successfully comment on post ==")
+                    $('#comment_post').modal('hide');
+                    
+                    }
+            })
+        }
+        function follow_user(username){
+            console.log("---->> USERNAME ",username)
+            json_data={
+                "follower":current_user,
+                "follow":username
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/follow_user',
+                data: JSON.stringify(json_data),
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log("== Successfully Follow to user ==")
+                   
                 }
             })
         }
+        // =============================================================
         show_all_posts()
     </script>
 </body>

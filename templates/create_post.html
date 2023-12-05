@@ -12,7 +12,7 @@
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-    <title>Create Post - {{ login_data[0].firstname}}{{login_data[0].lastname}}</title>
+    <title>Create Post - {{ login_data[-1].firstname}}{{login_data[-1].lastname}}</title>
 </head>
 <style>
     .bold_name{
@@ -20,36 +20,48 @@
     }
 </style>
 <body>
-    <div class="row mt-4">
+
+    <div class="row mt-4" style="background-color: aliceblue;">
         <div class="col-5"></div>
         <div class="col-3"><h4 class="bold_name">Create Post</h4></div>
         <div class="col-4"></div>
     </div>
-    <hr>
     <form method="POST" action="/create_post" enctype="multipart/form-data">
     <div class="row mt-4">
+        <div class="card mr-4">
         <div class="row mt-4">
                 <div class="col-4"></div>
-                <div class="col-4">Caption :<input type="text" id="post" name="post"></div>
+                <div class="col-4">
+                    <div class="form-group mb-1">
+                        <label for="exampleInputEmail1">Caption</label>
+                        <input type="text" class="form-control" id="post" name="post" aria-describedby="emailHelp" placeholder="Enter Caption for post">
+                    </div>
+                </div>
                 <div class="col-4"></div>
         </div>
         <div class="row mt-4">
             <div class="col-4"></div>
-            <div class="col-4">Photo :<input type="file" id="post_img" name="post_img"></div>
+            <div class="col-4">
+                <div class="form-group mb-1">
+                    <label for="exampleInputEmail1">Caption</label>
+                    <input type="file" class="form-control" id="post_img" name="post_img" aria-describedby="emailHelp">
+                </div>
+            </div>
             <div class="col-4"></div>
     </div>
-        <div class="row mt-4">
+        <div class="row mt-4 mb-4">
             <div class="col-5"></div>
             <div class="col-3"><button type="submit" class="btn btn-primary mt-4">Submit</button></div>
             <div class="col-4"></div>
         </div>
         
     </div>
+</div>
 </form>
     <script>
         
         function create_post() {
-            username =' {{ login_data[0].firstname}}'+' {{login_data[0].lastname}}'
+            username =' {{ login_data[-1].firstname}}'+' {{login_data[-1].lastname}}'
             var json_data = {
                 'posts': document.getElementById("post").value,
                 'username':username
